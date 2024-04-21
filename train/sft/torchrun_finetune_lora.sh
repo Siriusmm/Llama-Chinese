@@ -14,8 +14,8 @@ torchrun --nproc_per_node 4 --max-restarts 1000  finetune_clm_lora.py \
     --train_files ../../data/train_sft.csv \
     --validation_files  ../../data/dev_sft.csv \
                          ../../data/dev_sft_sharegpt.csv \
-    --per_device_train_batch_size 1 \
-    --per_device_eval_batch_size 1 \
+    --per_device_train_batch_size 4 \
+    --per_device_eval_batch_size 4 \
     --do_train \
     --do_eval \
     --use_fast_tokenizer false \
@@ -35,8 +35,8 @@ torchrun --nproc_per_node 4 --max-restarts 1000  finetune_clm_lora.py \
     --logging_steps 10 \
     --save_strategy steps \
     --preprocessing_num_workers 10 \
-    --save_steps 200 \
-    --eval_steps 200 \
+    --save_steps 2000 \
+    --eval_steps 2000 \
     --save_total_limit 200 \
     --seed 42 \
     --disable_tqdm false \
