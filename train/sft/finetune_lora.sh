@@ -4,13 +4,15 @@ if [ ! -d ${output_model} ];then
     mkdir ${output_model}
 fi
 cp ./finetune.sh ${output_model}
-deepspeed --include localhost:1,0 finetune_clm_lora.py \
-    --model_name_or_path meta-llama/Llama-2-7b-chat-hf \
+export NCCL_P2P_DISABLE=1
+export NCCL_IB_DISABLE=1
+deepspeed -H hostfile finetune_clm_lora.py \
+    --model_name_or_path /root/epfs/Atom-7B-Chat \
     --train_files ../../data/train_sft.csv \
     --validation_files  ../../data/dev_sft.csv \
                          ../../data/dev_sft_sharegpt.csv \
-    --per_device_train_batch_size 1 \
-    --per_device_eval_batch_size 1 \
+    --per_device_train_batch_size 4 \
+    --per_device_eval_batch_size 4 \
     --do_train \
     --do_eval \
     --use_fast_tokenizer false \
@@ -30,8 +32,8 @@ deepspeed --include localhost:1,0 finetune_clm_lora.py \
     --logging_steps 10 \
     --save_strategy steps \
     --preprocessing_num_workers 10 \
-    --save_steps 20 \
-    --eval_steps 20 \
+    --save_steps 2000 \
+    --eval_steps 2000 \
     --save_total_limit 2000 \
     --seed 42 \
     --disable_tqdm false \

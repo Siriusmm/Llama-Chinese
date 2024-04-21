@@ -28,6 +28,13 @@ import random
 from dataclasses import dataclass, field
 from itertools import chain
 import deepspeed
+local_env = os.environ.copy()
+local_env["PATH"]="/opt/conda/bin/:" + local_env["PATH"]
+os.environ.update(local_env)
+deepspeed.ops.op_builder.CPUAdamBuilder().load()
+
+
+
 from typing import Optional,List,Union
 
 import datasets
@@ -39,7 +46,7 @@ from peft import (  # noqa: E402
     PeftModel,
     get_peft_model,
     get_peft_model_state_dict,
-    prepare_model_for_int8_training,
+    # prepare_model_for_int8_training,
     prepare_model_for_kbit_training,
     set_peft_model_state_dict,
 )
@@ -273,6 +280,8 @@ def main():
 
     parser = HfArgumentParser((ModelArguments, DataTrainingArguments, TrainingArguments))
     # pdb.set_trace()
+    print("xxxxxxxxxxxxxxxxxxxxxxxxxx")
+    print(sys.argv)
     if len(sys.argv) == 2 and sys.argv[1].endswith(".json"):
         # If we pass only one argument to the script and it's the path to a json file,
         # let's parse it to get our arguments.
@@ -447,6 +456,7 @@ def main():
         )
         print(torch_dtype)
         torch_dtype = torch.float16
+        print()
         model = AutoModelForCausalLM.from_pretrained(
             model_args.model_name_or_path,
             from_tf=bool(".ckpt" in model_args.model_name_or_path),
