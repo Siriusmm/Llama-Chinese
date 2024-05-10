@@ -1,15 +1,20 @@
 output_model=/root/epfs/Llama-Chinese/train/sft/save_folder
+rm -rf  $output_model
 # 需要修改到自己的输入目录
 if [ ! -d ${output_model} ];then
     mkdir ${output_model}
 fi
+
+#非ib网络怎加如下配置
 export CUDA_HOME=/usr/local/cuda/
 export NCCL_P2P_DISABLE=1
 export NCCL_IB_DISABLE=1
 # export CUDA_VISIBLE_DEVICES=4
 
+#进入python目录
 cd /root/epfs/Llama-Chinese/train/sft
-torchrun --nproc_per_node 4 --max-restarts 1000  finetune_clm_lora.py \
+
+torchrun  finetune_clm_lora.py \
     --model_name_or_path /root/epfs/Atom-7B-Chat \
     --train_files ../../data/train_sft.csv \
     --validation_files  ../../data/dev_sft.csv \
